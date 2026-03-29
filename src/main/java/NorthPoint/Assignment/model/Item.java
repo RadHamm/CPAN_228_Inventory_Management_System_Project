@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data 
@@ -23,7 +25,7 @@ public class Item {
 
     @NotNull(message = "Price is required")
     @Min(value = 0, message = "Price cannot be negative") 
-    private Double price;
+    private BigDecimal price;
 
     @ManyToOne
     @JoinColumn(name = "brand_id")

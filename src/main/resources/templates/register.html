@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"></html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <div th:insert="fragments/base :: assetsHead"></div>
+
+    <title>Register</title>
+</head>
+<body>
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+
+    <form th:action="@{/register}" th:object="${user}" method="post">
+
+    <input type="text" th:field="*{username}" placeholder="Username" class="form-control mb-2">
+    <input type="password" th:field="*{password}" placeholder="Password" class="form-control mb-2">
+
+    <button type="submit" class="btn btn-primary w-100">Register</button>
+
+</form>
+    
+
+<div th:insert="fragments/base :: assetsScripts"></div>
+</body>
+</html>

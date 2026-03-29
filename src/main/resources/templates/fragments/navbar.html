@@ -1,51 +1,77 @@
-<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark"
-    xmlns:th="http://www.thymeleaf.org"
-    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
+<nav th:fragment="navbar"
+     class="navbar navbar-expand-lg navbar-dark bg-dark"
+     xmlns:th="http://www.thymeleaf.org"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
     <div class="container-fluid">
+
         <a class="navbar-brand" th:href="@{/}">Inventory Management System</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+
+            <!-- LEFT SIDE -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" th:href="@{/}">Home</a>
+                    <a class="nav-link" th:href="@{/}">Home</a>
                 </li>
+
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/inventory}">Inventory</a>
                 </li>
-                <li class="nav-item">
+
+                <!-- Only show register if NOT logged in -->
+                <li class="nav-item" sec:authorize="isAnonymous()">
                     <a class="nav-link" th:href="@{/register}">Register</a>
                 </li>
 
-                <ul class="navbar-nav mb-2 mb-lg-0" sec:authorize="isAnonymous()">
-                   <li class="nav-item">
-                     <a class="nav-link" th:href="@{/login}">Login</a>
-                    </li>
-                </ul>
+                <!-- Login (only if not logged in) -->
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="nav-link" th:href="@{/login}">Login</a>
+                </li>
 
-                <!-- Admin-only & Staff-only -->
-                <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'STAFF')">
+                <!-- STAFF + ADMIN -->
+                <li class="nav-item" sec:authorize="hasAnyRole('ADMIN','STAFF')">
                     <a class="nav-link" th:href="@{/add}">Add Item</a>
                 </li>
+
+                <!-- ADMIN ONLY -->
                 <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                     <a class="nav-link" th:href="@{/admin}">Admin</a>
                 </li>
+
             </ul>
 
-            <span class="text-white" sec:authorize="isAuthenticated()">
-               Logged in as: <span sec:authentication="name"></span>
-            </span>
+            <!-- RIGHT SIDE -->
+            <div class="d-flex align-items-center gap-3">
 
-            <ul class="navbar-nav mb-2 mb-lg-0" sec:authorize="isAuthenticated()">
-                <li class="nav-item">
-                    <form th:action="@{/logout}" method="post" class="d-flex">
-                        <button class="nav-link btn btn-link" type="submit">Logout</button>
-                    </form>
-                </li>
-            </ul>
+                <!-- USER INFO -->
+                <div sec:authorize="isAuthenticated()" class="text-white">
+                    Logged in as:
+                    <strong th:text="${#authentication.name}"></strong>
+                </div>
+
+                <!-- ROLE BADGES -->
+                <span sec:authorize="hasRole('ADMIN')" class="badge bg-danger">ADMIN</span>
+                <span sec:authorize="hasRole('STAFF')" class="badge bg-warning text-dark">STAFF</span>
+                <span sec:authorize="hasRole('USER')" class="badge bg-info text-dark">USER</span>
+
+                <!-- LOGOUT -->
+                <form sec:authorize="isAuthenticated()"
+                      th:action="@{/logout}"
+                      method="post"
+                      class="m-0">
+                    <button class="btn btn-outline-light btn-sm" type="submit">Logout</button>
+                </form>
+
+            </div>
+
         </div>
     </div>
 </nav>

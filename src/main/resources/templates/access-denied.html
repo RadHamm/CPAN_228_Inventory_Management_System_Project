@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <title>Access Denied</title>
+    <div th:insert="fragments/base :: assetsHead"></div>
+</head>
+
+<body class="bg-light">
+
+<nav th:replace="fragments/navbar :: navbar"></nav>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">Access Denied</h3>
+                </div>
+                <div class="card-body text-center p-4">
+                    <h4 class="mb-3">403 - You do not have permission to access this page.</h4>
+                    <p class="text-muted">
+                        Please return to the home page or log in with an account that has the required role.
+                    </p>
+
+                    <div class="mt-4 d-flex justify-content-center gap-2">
+                        <a th:href="@{/}" class="btn btn-primary">Go Home</a>
+                        <a th:href="@{/inventory}" class="btn btn-outline-secondary">View Inventory</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:insert="fragments/base :: assetsScripts"></div>
+</body>
+</html>

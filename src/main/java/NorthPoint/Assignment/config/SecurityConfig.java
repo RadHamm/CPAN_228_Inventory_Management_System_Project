@@ -10,13 +10,11 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-
 public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-
     }
 
     @Bean
@@ -24,32 +22,27 @@ public class SecurityConfig {
 
         http
             .authorizeHttpRequests(auth -> auth
-
-                // access for everyone
-                .requestMatchers("/", "/register", "/login", "/inventory").permitAll()
-                
-                // access for admin only
-                .requestMatchers(("/admin/**")).hasRole("ADMIN")  
+                .requestMatchers("/", "/register", "/login", "/access-denied").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/delete/**").hasRole("ADMIN")
                 .requestMatchers("/h2-console/**").hasRole("ADMIN")
-                
-                // access for staff + admin
                 .requestMatchers("/add").hasAnyRole("ADMIN", "STAFF")
                 .requestMatchers("/edit/**").hasAnyRole("ADMIN", "STAFF")
-
-                // access for authenticated users
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
                 .defaultSuccessUrl("/", true)
+                .failureUrl("/login?error")
                 .permitAll()
             )
-
             .logout(logout -> logout
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
             )
-
+            .exceptionHandling(exception -> exception
+                .accessDeniedPage("/access-denied")
+            )
             .csrf(csrf -> csrf
                 .ignoringRequestMatchers("/h2-console/**")
             )

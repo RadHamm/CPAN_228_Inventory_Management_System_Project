@@ -34,4 +34,20 @@ public class Item {
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    public String getName() {
+    return name;
+}
+
+public String getSku() {
+    return sku;
+}
+
+public BigDecimal getPrice() {
+    return price;
+}
+
+public Brand getBrand() {
+    return brand;
+}
 }

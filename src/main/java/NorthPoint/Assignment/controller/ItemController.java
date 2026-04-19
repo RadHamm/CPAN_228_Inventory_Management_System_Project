@@ -12,11 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -45,8 +41,7 @@ public class ItemController {
         
         if (brandId != null) {
             itemPage = itemRepository.findByBrandId(brandId, pageable);
-        } else if
-            (search != null && !search.isEmpty()) {
+        } else if (search != null && !search.isEmpty()) {
             itemPage = itemRepository.findByNameContainingIgnoreCase(search, pageable);
         } else {
             itemPage = itemRepository.findAll(pageable);
@@ -71,12 +66,11 @@ public class ItemController {
     }
 
     @PostMapping("/add")
-    public String addItem(@Validated @ModelAttribute("item") Item item, BindingResult result) {
-
+    public String addItem(@Validated @ModelAttribute("item") Item item, BindingResult result, Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("brands", brandRepository.findAll());
             return "add-item"; 
         }
-
         itemRepository.save(item); 
         return "redirect:/inventory";
     }
@@ -90,7 +84,8 @@ public class ItemController {
     @PostMapping("/delete/{id}")
     public String deleteItem(@PathVariable Long id, RedirectAttributes redirectAttribute) {
         try {
-        itemRepository.deleteById(id);
+            itemRepository.deleteById(id);
+            redirectAttribute.addFlashAttribute("success", "Item deleted successfully.");
         } catch (Exception e) {
             redirectAttribute.addFlashAttribute("error", "Unable to delete item.");
         }
@@ -99,24 +94,27 @@ public class ItemController {
 
     @GetMapping("/edit/{id}")
     public String editItem(@PathVariable Long id, Model model) {
-        model.addAttribute("item", itemRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid item Id:" + id)));
+        Item item = itemRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid item Id:" + id));
+        model.addAttribute("item", item);
         model.addAttribute("brands", brandRepository.findAll());
-        return "add-item";
+        return "add-item"; 
     }
 
     @PostMapping("/edit/{id}")
-    public String updateItem(@PathVariable Long id, @Validated @ModelAttribute("item") Item item, BindingResult result, RedirectAttributes redirectAttribute) {
+    public String updateItem(@PathVariable Long id, 
+                             @Validated @ModelAttribute("item") Item item, 
+                             BindingResult result, 
+                             RedirectAttributes redirectAttribute, 
+                             Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("brands", brandRepository.findAll());
             return "add-item";
         }
 
-        Item existingItem = itemRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid item Id:" + id));
-        existingItem.setName(item.getName());
-        existingItem.setSku(item.getSku());
-        existingItem.setPrice(item.getPrice());
-        existingItem.setBrand(item.getBrand());
+        item.setId(id);
 
-        itemRepository.save(existingItem);
+        itemRepository.save(item);
         redirectAttribute.addFlashAttribute("success", "Item updated successfully.");
         return "redirect:/admin";
     }

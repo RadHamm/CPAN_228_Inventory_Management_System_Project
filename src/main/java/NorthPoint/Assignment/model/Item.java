@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -12,7 +11,6 @@ import java.time.LocalDateTime;
 @Entity 
 @Table(name = "items")
 public class Item {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; 
@@ -34,20 +32,4 @@ public class Item {
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
-
-    public String getName() {
-    return name;
-}
-
-public String getSku() {
-    return sku;
-}
-
-public BigDecimal getPrice() {
-    return price;
-}
-
-public Brand getBrand() {
-    return brand;
-}
 }
